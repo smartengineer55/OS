@@ -1,0 +1,285 @@
+Assignment No 1:-Shell
+
+create()
+{
+echo "******creating database**********";
+echo "enter the name of database you want to create";
+read db;
+db="emp";
+echo "database created successfully";
+touch $db;
+
+
+}
+
+insert()
+{
+db="emp";
+echo "******insert employee record**********";
+echo "enter the emp_id";
+read id
+echo "enter the name of employee";
+read name
+echo "enter the location or city";
+read city
+echo "enter the salary of employee";
+read sal
+tuple=" |$id || $name || $city || $sal |";
+echo $tuple >> $db;
+}
+
+view()
+{
+db="emp";
+echo "******display database**********";
+cat $db;
+}
+
+search()
+{
+db="emp";
+echo "******search employee record from database**********";
+echo "enter the name of employee to search hisd/her record";
+read name
+if grep "$name" "$db"
+then 
+echo "record is found";
+else
+echo "record is not found";
+fi
+}
+delet()
+{
+db="emp";
+echo "******delete record form database**********";
+echo "enter the name of employee we want to delete";
+read name
+if grep "$name" "$db"
+# use grep -v for insert matching and mv the content in database
+# use sed command to select record and delete it
+then
+#sed-i /$name/d $db
+grep -v "$name" "$db">temp
+mv temp $db
+echo "record been deleted"
+else
+echo "invalid record for delete"
+fi
+}
+modify()
+{
+db="emp";
+echo "******modify employee record in database**********";
+echo "enter the name of employee whose record you want to modify";
+read name
+if grep -i $name $db
+then
+grep -v $name $db > temp
+mv temp $db
+echo "enter modified name, city, id and sal again"
+read name city id sal
+record=" |$id || $name || $city || $sal |";
+echo $record >> $db;
+echo "record modified successfully and modified record is ";
+echo "$record";
+else
+echo "record you want to modify is not present please enter valis one";
+fi
+}
+while [ true ]
+do
+echo "***********employee address book************";
+menu="1)create database 
+2)insert employee record
+3)display database
+4)delete record
+5)search record
+6)nodify record
+7)exit ";
+echo "$menu";
+echo "please enter your choice";
+read ch
+case $ch in
+1)create;
+;;
+2)insert;
+;;
+3)view;
+;;
+4)delet;
+;;
+5)search;
+;;
+6)modify;
+;;
+7)exit;
+;;
+*) echo "you entered invalid choice please enter choice again";
+;;
+esac
+done
+
+
+OUTPUT:-
+svpmit31@svpmit31-HP-EliteDesk-800-G2-SFF:~/Downloads$ sh assi.sh
+***********employee address book************
+1)create database 
+2)insert employee record
+3)display database
+4)delete record
+5)search record
+6)nodify record
+7)exit 
+please enter your choice
+1
+******creating database**********
+enter the name of database you want to create
+emp
+database created successfully
+***********employee address book************
+1)create database 
+2)insert employee record
+3)display database
+4)delete record
+5)search record
+6)nodify record
+7)exit 
+please enter your choice
+2
+******insert employee record**********
+enter the emp_id
+1
+enter the name of employee
+janu
+enter the location or city
+bmt
+enter the salary of employee
+10000
+***********employee address book************
+1)create database 
+2)insert employee record
+3)display database
+4)delete record
+5)search record
+6)nodify record
+7)exit 
+please enter your choice
+2
+******insert employee record**********
+enter the emp_id
+2
+enter the name of employee
+swara
+enter the location or city
+pune
+enter the salary of employee
+20000
+***********employee address book************
+1)create database 
+2)insert employee record
+3)display database
+4)delete record
+5)search record
+6)nodify record
+7)exit 
+please enter your choice
+2
+******insert employee record**********
+enter the emp_id
+3
+enter the name of employee
+anu
+enter the location or city
+satara
+enter the salary of employee
+30000
+***********employee address book************
+1)create database 
+2)insert employee record
+3)display database
+4)delete record
+5)search record
+6)nodify record
+7)exit 
+please enter your choice
+3
+******display database**********
+|4 || anu || pune || 39000 |
+|2 || janu || bmt || 20000 |
+|1 || janu || bmt || 10000 |
+|2 || swara || pune || 20000 |
+|3 || anu || satara || 30000 |
+***********employee address book************
+1)create database 
+2)insert employee record
+3)display database
+4)delete record
+5)search record
+6)nodify record
+7)exit 
+please enter your choice
+4
+******delete record form database**********
+enter the name of employee we want to delete
+janu
+|2 || janu || bmt || 20000 |
+|1 || janu || bmt || 10000 |
+record been deleted
+***********employee address book************
+1)create database 
+2)insert employee record
+3)display database
+4)delete record
+5)search record
+6)nodify record
+7)exit 
+please enter your choice
+3
+******display database**********
+|4 || anu || pune || 39000 |
+|2 || swara || pune || 20000 |
+|3 || anu || satara || 30000 |
+***********employee address book************
+1)create database 
+2)insert employee record
+3)display database
+4)delete record
+5)search record
+6)nodify record
+7)exit 
+please enter your choice
+6
+******modify employee record in database**********
+enter the name of employee whose record you want to modify
+anu
+|4 || anu || pune || 39000 |
+|3 || anu || satara || 30000 |
+enter modified name, city, id and sal again
+anu mumbai 1 10000
+record modified successfully and modified record is 
+ |1 || anu || mumbai || 10000 |
+***********employee address book************
+1)create database 
+2)insert employee record
+3)display database
+4)delete record
+5)search record
+6)nodify record
+7)exit 
+please enter your choice
+3
+******display database**********
+|2 || swara || pune || 20000 |
+|1 || anu || mumbai || 10000 |
+***********employee address book************
+1)create database 
+2)insert employee record
+3)display database
+4)delete record
+5)search record
+6)nodify record
+7)exit 
+please enter your choice
+7
+
+
