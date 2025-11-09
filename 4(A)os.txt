@@ -1,0 +1,138 @@
+#Producer-Consumer problem
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<semaphore.h>
+#include<pthread.h>
+sem_t full,empty;
+int counter;
+//pthread_mutex_t mutex;
+sem_t mutex;
+pthread_t tidp[10],tidc[10];
+#define size 10
+int buffer[size],item;
+//---------------------------------------------------------
+void initialise() //intialize all semaphore and mutex values
+{
+sem_init(&full,1,0);
+sem_init(&empty,1,size);
+//pthread_mutex_init(&mutex,NULL);
+sem_init(&mutex,1,1);
+counter=0;
+}
+//----------------------------------------------------------
+void * producer(void * p)     //code for producer
+{
+long int pno;
+pno=(long int) p;
+sem_wait(&empty);
+//pthread_mutex_lock(&mutex);
+sem_wait(&mutex);
+item=random()%10;
+//item produced by producer
+printf("\nproducerP[%ld]  producer item %d",pno,item);
+buffer[counter++]=item;
+//pthread_mutex_unlock(&mutex);
+sem_post(&mutex);
+sem_post(&full);
+pthread_exit(NULL);
+}
+
+//-------------------------------------------------------------
+void * consumer(void * c)    //code for consumer
+{
+long int cno;
+cno=(long int) c;
+sem_wait(&full);
+//pthread_mutex_lock(&mutex);
+sem_wait(&mutex);
+//item consumed by consumer
+item=buffer[--counter];
+printf("\n consumer C[%ld]  consumes item %d",cno,item);
+//pthread_mutex_unlock(&mutex);
+sem_post(&mutex);
+sem_post(&empty);
+pthread_exit(NULL);
+}
+
+
+//------------------------------------------------------------------
+
+int main()
+{
+int n1,n2;
+long int i;
+initialise();
+printf("\n Enter the number of producers");
+scanf("%d",&n1);
+printf("\n Enter the number of consumers");
+scanf("%d",&n2);
+
+for(i=0;i<n1;i++)     //creating producer threads
+{
+pthread_create(&tidp[i],NULL,producer,(void *) i);
+}
+
+for(i=0;i<n1;i++)    //joining producers thread
+{
+pthread_join(tidp[i],NULL);
+}
+
+
+for(i=0;i<n2;i++)        //creating consumers thread
+{
+pthread_create(&tidc[i],NULL,consumer,(void *) i);
+}
+
+
+for(i=0;i<n2;i++)        //joining consumer threads
+{
+pthread_join(tidc[i],NULL);
+}
+return 0;
+} 
+
+#OUTPUT
+svpmit31@svpmit31-HP-EliteDesk-800-G2-SFF:~/Documents$ gcc 4AA.c -o 4a -pthread
+svpmit31@svpmit31-HP-EliteDesk-800-G2-SFF:~/Documents$ ./4a
+
+ Enter the number of producers 10
+
+ Enter the number of consumers 10
+
+producerP[2]  producer item 3
+producerP[3]  producer item 6
+producerP[5]  producer item 7
+producerP[4]  producer item 5
+producerP[1]  producer item 3
+producerP[0]  producer item 5
+producerP[6]  producer item 6
+producerP[7]  producer item 2
+producerP[8]  producer item 9
+producerP[9]  producer item 1
+ consumer C[1]  consumes item 1
+ consumer C[3]  consumes item 9
+ consumer C[0]  consumes item 2
+ consumer C[4]  consumes item 6
+ consumer C[5]  consumes item 5
+ consumer C[2]  consumes item 3
+ consumer C[6]  consumes item 5
+ consumer C[7]  consumes item 7
+ consumer C[8]  consumes item 6
+ consumer C[9]  consumes item 3svpmit31@svpmit31-HP-EliteDesk-800-G2-SFF:~/Documents$ ./4a
+
+ Enter the number of producers 5
+
+ Enter the number of consumers 5
+
+producerP[1]  producer item 3
+producerP[2]  producer item 6
+producerP[3]  producer item 7
+producerP[0]  producer item 5
+producerP[4]  producer item 3
+ consumer C[0]  consumes item 3
+ consumer C[2]  consumes item 5
+ consumer C[1]  consumes item 7
+ consumer C[3]  consumes item 6
+ consumer C[4]  consumes item 3svpmit31@svpmit31-HP-EliteDesk-800-G2-SFF:~/Documents$ 
+	

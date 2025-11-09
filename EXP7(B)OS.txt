@@ -1,0 +1,77 @@
+#Inter process communication using shared memory.
+
+#SERVER
+
+#include<sys/types.h>
+#include<sys/shm.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/ipc.h>
+
+#define SHM_SIZE 1024
+#define SHM_KEY 0x1234
+
+int main()
+{
+int shmid=shmget(SHM_KEY,SHM_SIZE,IPC_CREAT | 0666);
+if(shmid==-1)
+{
+perror("shmget failed");
+exit(1);
+}
+char*data=(char*)shmat(shmid,NULL,0);
+if(data==(char*)-1)
+{
+perror("shmat failed");
+exit(1);
+}
+const char*message="Hello from server";
+strncpy(data,message,SHM_SIZE);
+printf("server: message written to shared memory.\n");
+
+shmdt(data);
+return 0;
+
+}
+
+#CLIENT
+
+#include<sys/types.h>
+#include<sys/shm.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/ipc.h>
+
+#define SHM_SIZE 1024
+#define SHM_KEY 0x1234
+int main()
+{
+int shmid=shmget(SHM_KEY,SHM_SIZE,IPC_CREAT | 0666);
+if(shmid==-1)
+{
+perror("shmget failed");
+exit(1);
+}
+char*data=(char*)shmat(shmid,NULL,0);
+if(data==(char*)-1)
+{
+perror("shmat failed");
+exit(1);
+}
+printf("client: message from shared memory: '%s'\n",data);
+shmdt(data);
+shmctl(shmid,IPC_RMID,NULL);
+return 0;
+}
+
+OUTPUT:-
+svpmit31@svpmit31-HP-EliteDesk-800-G2-SFF:~/Documents$ gcc server2.c -o ser
+svpmit31@svpmit31-HP-EliteDesk-800-G2-SFF:~/Documents$ ./ser
+server: message written to shared memory.
+svpmit31@svpmit31-HP-EliteDesk-800-G2-SFF:~/Documents$ gcc client2.c -o cli
+svpmit31@svpmit31-HP-EliteDesk-800-G2-SFF:~/Documents$ ./cli
+client: message from shared memory: 'Hello from server'
+
+
